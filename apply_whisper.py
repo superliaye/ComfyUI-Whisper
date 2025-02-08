@@ -12,6 +12,13 @@ class ApplyWhisperNode:
             "required": {
                 "audio": ("AUDIO",),
                 "model": (["base", "tiny", "small", "medium", "large"],),
+                "initial_prompt": ("STRING", {"multiline": True, "default": ""}),
+                "temperature":  ("INT",{
+                    "default": 0,
+                    "step":5,
+                    "display": "number"
+                }),
+
             }
         }
 
@@ -20,7 +27,7 @@ class ApplyWhisperNode:
     FUNCTION = "apply_whisper"
     CATEGORY = "whisper"
 
-    def apply_whisper(self, audio, model):
+    def apply_whisper(self, audio, model, initial_prompt, temperature):
 
         # save audio bytes from VHS to file
         temp_dir = folder_paths.get_temp_directory()
@@ -31,7 +38,7 @@ class ApplyWhisperNode:
 
         # transribe using whisper
         model = whisper.load_model(model)
-        result = model.transcribe(audio_save_path, word_timestamps=True)
+        result = model.transcribe(audio_save_path, word_timestamps=True, initial_prompt=initial_prompt, temperature=temperature)
 
         segments = result['segments']
         segments_alignment = []
